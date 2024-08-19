@@ -1,0 +1,22 @@
+### SignUp API
+
+POST http://localhost:3000/auth/signup
+content-type: application/json
+
+{
+    "name": "Jon",
+    "phone": "1223",
+    "email": "jon@gmail.com",
+    "password": "123456"
+} 
+
+
+
+### Invalid Data 
+GET http://localhost:3000/auth/login
+content-type: application/json
+
+{
+    "phone": "12",
+    "password": "123456"
+} 
