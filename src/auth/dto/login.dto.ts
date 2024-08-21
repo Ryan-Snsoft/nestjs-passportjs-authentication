@@ -6,12 +6,12 @@ export class LoginDto {
     @MinLength(7)
     phone: string;
 
-    @IsString()
     @IsOptional()
+    @IsString()
     @MinLength(6)
     password?: string;
 
-    @IsString()
     @IsOptional()
+    @IsString()
     verificationCode?: string;
 }

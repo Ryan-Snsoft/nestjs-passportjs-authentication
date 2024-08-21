@@ -21,22 +21,38 @@ export class AuthService {
             throw new UnauthorizedException("User not found");
         }
 
-        if (verificationCode && verificationCode !== user.verificationCode) {
-            throw new UnauthorizedException("Invalid verification code");
+        
+        if (password) {
+            // Check if password field exists
+            if (!user.password) {
+                throw new UnauthorizedException("Password not set for this user");
+            }
+
+            // Compare hashed password
+            const isPasswordValid = await bcrypt.compare(password, user.password);
+            if (!isPasswordValid) {
+                throw new UnauthorizedException("Invalid Password");
+            }
+        }
+        else if (verificationCode) {
+            if (!user.verificationCode) {
+                throw new UnauthorizedException("Verification code not set for this user");
+            }
+            
+            // verify SMS Code with appropriate db in the future
+            if (verificationCode !== user.verificationCode) {
+                throw new UnauthorizedException("Invalid verification code");
+            }
+        }
+        else {
+            // Both not provided
+            throw new UnauthorizedException("Must provide either password or SMS");
         }
 
-        // Compare hashed password
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-            throw new UnauthorizedException("Invalid Password");
-        }
-        
         return user;
     }
 
-    async login(loginDto: LoginDto): Promise<{ accessToken: string, name: string }> {
-        const user = await this.validateUser(loginDto);
-
+    async login(user: User): Promise<{ accessToken: string, name: string }> {
         const payload: JwtPayload = { phone: user.phone, sub: user._id.toString() };
         const accessToken = this.jwtService.sign(payload);
 

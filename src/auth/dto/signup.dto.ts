@@ -10,17 +10,17 @@ export class SignUpDto {
     @MinLength(7, { message: "Phone must be longer than 7" })
     phone: string;
 
-    @IsString()
     @IsOptional()
+    @IsString()
     @IsEmail({}, { message: "Please enter correct email" })
     email: string;
 
-    @IsString()
     @IsOptional()
+    @IsString()
     @MinLength(6)
     password?: string;
 
-    @IsString()
     @IsOptional()
+    @IsString()
     verificationCode?: string;
 }

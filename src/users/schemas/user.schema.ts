@@ -12,7 +12,7 @@ export class User extends Document {
     @Prop({ required: true, unique: true })
     phone: string
 
-    @Prop({ unique: [true, 'Email Exists'] })
+    @Prop()
     email: string
     
     @Prop()

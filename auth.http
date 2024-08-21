@@ -9,14 +9,26 @@ content-type: application/json
     "email": "ryan@gmail.com",
     "password": "123456",
     "verificationCode": ""
+}
+
+###
+
+POST http://localhost:3000/auth/signup
+content-type: application/json
+
+{
+    "name": "testNothing",
+    "phone": "testPassword",
 } 
 
 
 ### Invalid Data 
-GET http://localhost:3000/auth/login
+POST http://localhost:3000/auth/login
 content-type: application/json
 
 {
-    "phone": "1234567",
-    "password": "123456"
+    "phone": "testSMS",
+    # "password":"testPassword",
+    "verificationCode": "testSMS"
 } 
+
