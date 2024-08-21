@@ -1,19 +1,26 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength } from "class-validator";
+import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from "class-validator";
 
 export class SignUpDto {
     @IsNotEmpty()
     @IsString()
-    readonly name: string;
-
-    @IsNotEmpty()
-    readonly phone: string;
-
-    @IsNotEmpty()
-    @IsEmail({}, { message: "Please enter correct email" })
-    readonly email: string;
+    name: string;
 
     @IsNotEmpty()
     @IsString()
+    @MinLength(7, { message: "Phone must be longer than 7" })
+    phone: string;
+
+    @IsString()
+    @IsOptional()
+    @IsEmail({}, { message: "Please enter correct email" })
+    email: string;
+
+    @IsString()
+    @IsOptional()
     @MinLength(6)
-    readonly password: string;
+    password?: string;
+
+    @IsString()
+    @IsOptional()
+    verificationCode?: string;
 }

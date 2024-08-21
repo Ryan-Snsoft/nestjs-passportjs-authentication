@@ -1,54 +1,49 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import * as bcrypt from 'bcryptjs';
-import { Model } from 'mongoose';
-import { User } from './schemas/user.schema';
 import { JwtService } from '@nestjs/jwt';
-import { SignUpDto } from './dto/signup.dto';
+import { User } from 'src/users/schemas/user.schema';
+import { UsersService } from 'src/users/users.service';
 import { LoginDto } from './dto/login.dto';
-
+import { SignUpDto } from './dto/signup.dto';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
+import * as bcrypt from 'bcryptjs'; // Import bcryptjs
 @Injectable()
 export class AuthService {
     constructor(
-        @InjectModel(User.name)
-        private userModel: Model<User>,
+        private usersService: UsersService,
         private jwtService: JwtService
     ) {}
 
-    async signUp(signUpDto: SignUpDto): Promise<{ token: string }> {
-        const { name, phone, email, password } = signUpDto
+    async validateUser(loginDto: LoginDto): Promise<User> {
+        const { phone, password, verificationCode } = loginDto;
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const user = await this.usersService.findByPhoneNumber(phone);
+        if (!user) {
+            throw new UnauthorizedException("User not found");
+        }
 
-        const user = await this.userModel.create({
-            name,
-            phone,
-            email,
-            password: hashedPassword
-        })
+        if (verificationCode && verificationCode !== user.verificationCode) {
+            throw new UnauthorizedException("Invalid verification code");
+        }
 
-        const token = this.jwtService.sign({ id: user._id })
-
-        return { token }
+        // Compare hashed password
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            throw new UnauthorizedException("Invalid Password");
+        }
+        
+        return user;
     }
 
-    async login(loginDto: LoginDto): Promise<{ token: string }> {
-        const { phone, password } = loginDto;
+    async login(loginDto: LoginDto): Promise<{ accessToken: string, name: string }> {
+        const user = await this.validateUser(loginDto);
 
-        const user = await this.userModel.findOne({ phone });
+        const payload: JwtPayload = { phone: user.phone, sub: user._id.toString() };
+        const accessToken = this.jwtService.sign(payload);
 
-        if (!user) {
-            throw new UnauthorizedException('Invalid phone number or password')
-        }
+        return { accessToken, name: user.name };
+    }
 
-        const isPasswordMatched = await bcrypt.compare(password, user.password)
-
-        if (!isPasswordMatched) {
-            throw new UnauthorizedException('Invalid phone number or password')
-        }
-
-        const token = this.jwtService.sign({ id: user._id })
-
-        return { token }
+    async signup(signupDto: SignUpDto): Promise<User> {
+        return this.usersService.create(signupDto);
     }
 }

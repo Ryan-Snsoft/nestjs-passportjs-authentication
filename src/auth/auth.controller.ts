@@ -7,14 +7,14 @@ import { LoginDto } from './dto/login.dto';
 export class AuthController {
     constructor( private authService: AuthService) {}
 
-    @Post('/signup')
-    signUp(@Body() signUpDto: SignUpDto): Promise<{ token: string }> {
-        return this.authService.signUp(signUpDto);
+    @Post('signup')
+    signUp(@Body() signUpDto: SignUpDto) {
+        return this.authService.signup(signUpDto);
     }
 
 
-    @Get('/login')
-    login(@Body() loginDto: LoginDto): Promise<{ token: string }> {
+    @Get('login')
+    login(@Body() loginDto: LoginDto): Promise<{ accessToken: string }> {
         return this.authService.login(loginDto);
     }
 
