@@ -32,3 +32,54 @@ content-type: application/json
     "verificationCode": "testSMS"
 } 
 
+
+### CHECK Token authentication bearer with JWT strategy
+GET http://localhost:3000/users/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6InRlc3RQYXNzd29yZCIsInN1YiI6IjY2YzU5OTBlYjM4YWZmYWRlMTU1OTRmZCIsImlhdCI6MTcyNDIyOTQ2MywiZXhwIjoxNzI0MjI5NzYzfQ.yn3UmIuKuAmHZOQI1-D6WHTEx1s5IczPPSTn-AI31tQ
+
+
+
+
+
+# Store
+curl -X POST "http://etcd.client88.me:2379/v3/kv/put" \
+  -H "Content-Type: application/json" \
+  -d '{"key": "and0X3NlY3JldA==", "value": "and0X3NlY3JldF9rZXk="}'
+
+  returns 
+  {"header":{"cluster_id":"6732990714270907514","member_id":"5735548892410650800","revision":"2","raft_term":"2"}}%
+
+# Retrieve
+curl -X POST "http://etcd.client88.me:2379/v3/kv/range" \
+    -H "Content-Type: application/json" \
+    -d '{"key": "and0X3NlY3JldA=="}'
+
+  returns
+  {"header":{"cluster_id":"6732990714270907514","member_id":"5735548892410650800","revision":"2","raft_term":"2"},"kvs":[{"key":"and0X3NlY3JldA==","create_revision":"2","mod_revision":"2","version":"1","value":"and0X3NlY3JldF9rZXk="}],"count":"1"}
+
+
+# Encode
+echo -n "my-value" | base64
+
+# Decode
+echo "bXkta2V5" | base64 --decode
+
+# key jwt_sercret
+and0X3NlY3JldA==
+
+# value jwt_secret_key
+and0X3NlY3JldF9rZXk=
+
+# To remove a key-value pair:
+curl -X POST http://etcd.client88.me:2379/v3/kv/deleterange \
+  -d '{"key": "and0X3NlY3JldA=="}'
+
+curl -X POST "http://etcd.client88.me:2379/v3/kv/deleterange" \
+    -H "Content-Type: application/json" \
+    -d '{"key": "ZXhhbXBsZV9rZXk="}'
+
+
+# Watch for Changes
+# To watch for changes to a key (make sure you use a long-lived HTTP connection or handle streaming responses):
+curl -X POST http://etcd.client88.me:2379/v3/watch/watch \
+  -d '{"create_request": {"key": "'$(echo -n "example_key" | base64)'"}}'
