@@ -17,27 +17,35 @@ POST http://localhost:3000/auth/signup
 content-type: application/json
 
 {
-    "name": "testNothing",
-    "phone": "testPassword",
+    "name": "Ryan",
+    "phone": "0192028392",
+    "password": "ryantest",
+    "email": "ryan@gmail.com"
 } 
 
+### Login 
+POST http://localhost:3000/auth/login
+content-type: application/json
+
+{
+    "phone": "0192028392",
+    "password":"ryantest"
+} 
 
 ### Invalid Data 
 POST http://localhost:3000/auth/login
 content-type: application/json
 
 {
-    "phone": "testSMS",
-    # "password":"testPassword",
-    "verificationCode": "testSMS"
+    "phone": "0192028392",
+    "password":"ryantest"
+    # "verificationCode": "testSMS"
 } 
 
 
 ### CHECK Token authentication bearer with JWT strategy
 GET http://localhost:3000/users/profile
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6InRlc3RQYXNzd29yZCIsInN1YiI6IjY2YzU5OTBlYjM4YWZmYWRlMTU1OTRmZCIsImlhdCI6MTcyNDIyOTQ2MywiZXhwIjoxNzI0MjI5NzYzfQ.yn3UmIuKuAmHZOQI1-D6WHTEx1s5IczPPSTn-AI31tQ
-
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjAxOTIwMjgzOTIiLCJzdWIiOiI2NmM2YTg4MWIyNmE1MzYzZjQ0ZTE0ZTkiLCJpYXQiOjE3MjQzMDY2NTMsImV4cCI6MTcyNDMwNjk1M30.teSLnpLkWWhhhgs9UmvMrqwj39EsnUGXeDhiWa1z7dk
 
 
 
@@ -64,7 +72,7 @@ echo -n "my-value" | base64
 # Decode
 echo "bXkta2V5" | base64 --decode
 
-# key jwt_sercret
+# key jwt_secret
 and0X3NlY3JldA==
 
 # value jwt_secret_key

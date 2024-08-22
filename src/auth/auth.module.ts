@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, Provider } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { PassportModule } from '@nestjs/passport';
@@ -9,6 +9,15 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import { EtcdService } from 'src/etcd/etcd.service';
 import { EtcdModule } from 'src/etcd/etcd.module';
+
+// Provider for 'ETCD_SECRET'
+const EtcdSecretProvider: Provider = {
+  provide: 'ETCD_SECRET',
+  useFactory: async (etcdService: EtcdService) => {
+    return await etcdService.getJWTSecret();
+  },
+  inject: [EtcdService],
+};
 @Module({
   imports: [
     UsersModule,
@@ -28,7 +37,7 @@ import { EtcdModule } from 'src/etcd/etcd.module';
       }
     })
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy, EtcdSecretProvider],
   controllers: [AuthController]
 })
 export class AuthModule {}

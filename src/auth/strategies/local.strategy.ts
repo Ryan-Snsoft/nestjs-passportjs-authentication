@@ -17,7 +17,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     }
 
     async validate(req: Request, phone: string): Promise<User> {
-        console.log('Local Request Body:', req.body);
+        // console.log('Local Request Body:', req.body);
 
         const loginDto = new LoginDto();
         loginDto.phone = phone;
